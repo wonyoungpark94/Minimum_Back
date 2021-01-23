@@ -14,7 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
 from django.conf import settings
-from django.conf.urls import url, include
+from django.conf.urls import include
 from django.conf.urls.static import static
 from django.urls import path
 from django.contrib import admin
@@ -22,9 +22,10 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = [
-    path('admin', admin.site.urls),
+    path("admin", admin.site.urls),
+    path("challenges", include("challenges.urls")),
+    path("records", include("records.urls")),
 ]
-
 
 
 # 개발서버에서 미디어 파일 서빙
@@ -32,8 +33,9 @@ urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.DEBUG:
     import debug_toolbar
+
     urlpatterns += [
-        url(r'^__debug__/', include(debug_toolbar.urls)),
+        path("__debug__/", include(debug_toolbar.urls)),
     ]
 
     # for drf-yasg
@@ -44,19 +46,31 @@ if settings.DEBUG:
     schema_view = get_schema_view(
         openapi.Info(
             title="Snippets API",
-            default_version='v1',
+            default_version="v1",
             description="Test description",
             terms_of_service="https://www.google.com/policies/terms/",
             contact=openapi.Contact(email="contact@snippets.local"),
             license=openapi.License(name="BSD License"),
         ),
-        validators=['flex', 'ssv'],
+        validators=["flex", "ssv"],
         public=True,
         permission_classes=(permissions.AllowAny,),
     )
     urlpatterns += [
         # 자동 API 문서 생성
-    path('swagger<str:format>', schema_view.without_ui(cache_timeout=0), name='schema-json'),
-    path('swagger/',schema_view.with_ui('swagger', cache_timeout=0),name='schema-swagger-ui'),
-    path('redocs/',schema_view.with_ui('redoc', cache_timeout=0),name='schema-redoc'),
+        path(
+            "swagger<str:format>",
+            schema_view.without_ui(cache_timeout=0),
+            name="schema-json",
+        ),
+        path(
+            "swagger/",
+            schema_view.with_ui("swagger", cache_timeout=0),
+            name="schema-swagger-ui",
+        ),
+        path(
+            "redocs/",
+            schema_view.with_ui("redoc", cache_timeout=0),
+            name="schema-redoc",
+        ),
     ]

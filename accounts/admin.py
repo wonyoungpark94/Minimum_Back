@@ -1,3 +1,4 @@
 from django.contrib import admin
 
-# Register your models here.
+class AccountsAdmin(admin.ModelAdmin):
+    fields = ('email', 'name', 'date_joined')

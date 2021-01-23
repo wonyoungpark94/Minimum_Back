@@ -15,16 +15,19 @@ class JSONWebTokenAuthentication(BaseJSONWebTokenAuthentication):
 
         Authorization: JWT eyJhbGciOiAiSFMyNTYiLCAidHlwIj
     """
-    www_authenticate_realm = 'api'
+
+    www_authenticate_realm = "api"
 
     def get_jwt_value(self, request):
         auth = get_authorization_header(request).split()
         auth_header_prefix = api_settings.JWT_AUTH_HEADER_PREFIX.lower()
 
         if not auth:
-            acc_type = request.query_params.get('acc_type')
+            acc_type = request.query_params.get("acc_type")
             if acc_type:
-                JWT_AUTH_COOKIE = settings.JWT_AUTH[f'JWT_AUTH_COOKIE_{acc_type.upper()}']
+                JWT_AUTH_COOKIE = settings.JWT_AUTH[
+                    f"JWT_AUTH_COOKIE_{acc_type.upper()}"
+                ]
                 return request.COOKIES.get(JWT_AUTH_COOKIE)
             return None
 
@@ -32,11 +35,13 @@ class JSONWebTokenAuthentication(BaseJSONWebTokenAuthentication):
             return None
 
         if len(auth) == 1:
-            msg = _('Invalid Authorization header. No credentials provided.')
+            msg = _("Invalid Authorization header. No credentials provided.")
             raise exceptions.AuthenticationFailed(msg)
         elif len(auth) > 2:
-            msg = _('Invalid Authorization header. Credentials string '
-                    'should not contain spaces.')
+            msg = _(
+                "Invalid Authorization header. Credentials string "
+                "should not contain spaces."
+            )
             raise exceptions.AuthenticationFailed(msg)
 
         return auth[1]
@@ -47,4 +52,6 @@ class JSONWebTokenAuthentication(BaseJSONWebTokenAuthentication):
         header in a `401 Unauthenticated` response, or `None` if the
         authentication scheme should return `403 Permission Denied` responses.
         """
-        return '{0} realm="{1}"'.format(api_settings.JWT_AUTH_HEADER_PREFIX, self.www_authenticate_realm)
+        return '{0} realm="{1}"'.format(
+            api_settings.JWT_AUTH_HEADER_PREFIX, self.www_authenticate_realm
+        )

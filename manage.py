@@ -2,15 +2,16 @@ import os
 import sys
 
 if __name__ == "__main__":
-    if 'DJANGO_SETTINGS_MODULE' in os.environ:
+    if "DJANGO_SETTINGS_MODULE" in os.environ:
         pass
     else:
         os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.development")
 
     # Override default port for 'runserver' command
-    if 'DJANGO_SETTINGS_MODULE' in os.environ:
-        if os.environ['DJANGO_SETTINGS_MODULE'] == 'config.settings.production':
+    if "DJANGO_SETTINGS_MODULE" in os.environ:
+        if os.environ["DJANGO_SETTINGS_MODULE"] == "config.settings.production":
             from django.core.management.commands.runserver import Command as runserver
+
             runserver.default_port = "80"
 
     try:
